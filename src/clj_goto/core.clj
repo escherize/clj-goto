@@ -22,11 +22,15 @@
 (defmacro block [& body]
   (let [goto-sym (gensym "goto-sym")]
     `(let [~goto-sym (fn [label#]
-                       (throw (ex-info "" {:goto/label label#})))
+                       (throw (ex-info "" {::label label#})))
            blocks# ~(deep-replace (group-labels body) 'goto goto-sym)
-           engine# (fn engine# [~goto-sym]
-                     (try
-                       ((get blocks# ~goto-sym))
-                       (catch Exception e#
-                         (engine# (:goto/label (ex-data e#))))))]
+           engine# (fn engine# [intial-labe<l#]
+                     (loop [label# intial-label#]
+                       (let [out# (try ((get blocks# label#))
+                                       (catch Exception e# e#))]
+                         (if-let [label# (and
+                                           (instance? clojure.lang.ExceptionInfo out#)
+                                           (::label (ex-data out#)))]
+                           (recur label#)
+                           out#))))]
        (engine# ~(first-label body)))))

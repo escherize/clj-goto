@@ -1,0 +1,3 @@
+{:hooks
+ {:analyze-call
+  {clj-goto.core/block hooks.clj-goto.core/goto-block}}}
