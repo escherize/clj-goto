@@ -24,7 +24,7 @@
     `(let [~goto-sym (fn [label#]
                        (throw (ex-info "" {::label label#})))
            blocks# ~(deep-replace (group-labels body) 'goto goto-sym)
-           engine# (fn engine# [intial-labe<l#]
+           engine# (fn engine# [intial-label#]
                      (loop [label# intial-label#]
                        (let [out# (try ((get blocks# label#))
                                        (catch Exception e# e#))]
